@@ -26,7 +26,7 @@
         
         <Grid.Resources>
             <HierarchicalDataTemplate x:Key="Child_template">
-                <CheckBox>
+                <CheckBox IsChecked="{Binding IsChecked}">
                     <TextBlock Text="{Binding Bezeichnung}"/>
                 </CheckBox>
             </HierarchicalDataTemplate>
@@ -51,7 +51,7 @@
                  ItemsSource="{Binding Persons_Checklist}"/>
 
         <Button Grid.Row="0" Command="{Binding SendListBox}" Grid.Column="1" Width="50" Height="50" Content=">>" />
-        <Button Grid.Row="1" Grid.Column="1" Width="50" Height="50" Content=">>" />
+        <Button Grid.Row="1" Command="{Binding SendTreeView}" Grid.Column="1" Width="50" Height="50" Content=">>" />
         
         <ListBox Grid.Row="0" Grid.Column="2"
          ItemsSource="{Binding Persons_Filterlist}"
@@ -61,8 +61,8 @@
         <TreeView Grid.Row="1" Grid.Column="0" ItemTemplate="{StaticResource Parent_template}" ItemsSource="{Binding SortedThemes}"/>
 
         <ListBox Grid.Row="1" Grid.Column="2"
-         ItemsSource="{Binding Persons_Checklist}"
-         DisplayMemberPath="Gruppe"/>
+         ItemsSource="{Binding ThemeResult}"
+         DisplayMemberPath="Bezeichnung"/>
 
     </Grid>
 </Window>

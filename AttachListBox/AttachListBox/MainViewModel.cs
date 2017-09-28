@@ -23,6 +23,20 @@ namespace AttachListBox
                 } else return sendListBox;
             }
         }
+
+        SendTreeViewCommand sendTreeView;
+        public ICommand SendTreeView
+        {
+            get
+            {
+                if (sendTreeView == null)
+                {
+                    sendTreeView = new SendTreeViewCommand(this);
+                    return sendTreeView;
+                }
+                else return sendTreeView;
+            }
+        }
         #endregion
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
@@ -34,6 +48,11 @@ namespace AttachListBox
 
         ObservableCollection<SortedThemeList> sortedThemes = new ObservableCollection<SortedThemeList>();
         public ObservableCollection<SortedThemeList> SortedThemes { get { return sortedThemes; } }
+
+        #region List mit ausgewählten Themen
+        public ObservableCollection<Thema> themeResult = new ObservableCollection<Thema>();
+        public ObservableCollection<Thema> ThemeResult { get { return themeResult; } }
+        #endregion
 
         ObservableCollection<String> themen_grp { get; set; }
 
@@ -97,12 +116,32 @@ namespace AttachListBox
             {
                 var themeQuery = from q in themen
                                  where q.Gruppe == element.Key
-                                 select q;
-                sortedThemes.Add(new SortedThemeList() { Gruppe = element.Key, ThemeList = new ObservableCollection<Thema>(themeQuery) });
+                                 select new Thema_CheckList()
+                                 {
+                                    Bezeichnung = q.Bezeichnung,
+                                    Gruppe = q.Gruppe,
+                                    Ident = q.Ident,
+                                    IsChecked = false
+                                 };
+
+                sortedThemes.Add(new SortedThemeList() { Gruppe = element.Key, ThemeList = new ObservableCollection<Thema_CheckList>(themeQuery) });
             }
         }
 
-        #region SendListboxCommand-Methode
+        public void GetThemeResultList()
+        {
+            ThemeResult.Clear();
+
+            foreach (SortedThemeList tList in sortedThemes)
+            {
+                foreach (Thema_CheckList t in tList.ThemeList)
+                {
+                    if(t.IsChecked) ThemeResult.Add(t);
+                }
+            }
+        }
+
+        #region Command-Methode
         public void SendListBoxCommand()
         {
             persons_Filterlist.Clear();
@@ -112,6 +151,11 @@ namespace AttachListBox
                 if (element.IsChecked) persons_Filterlist.Add(element);
             }
         }
-        #endregion
-    }
+
+        public void SendTreeViewCommand()
+        {
+            GetThemeResultList();
+        }
+            #endregion
+        }
 }

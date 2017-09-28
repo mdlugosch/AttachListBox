@@ -55,9 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="SendListBoxCommand.cs" />
-    <Compile Include="SortedThemeList.cs" />
-    <Compile Include="Thema.cs" />
+    <Compile Include="Commands\SendListBoxCommand.cs" />
+    <Compile Include="Commands\SendTreeViewCommand.cs" />
+    <Compile Include="CheckListClasses\SortedThemeList.cs" />
+    <Compile Include="DummyDataClasses\Thema.cs" />
+    <Compile Include="CheckListClasses\Thema_CheckList.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -73,8 +75,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Person.cs" />
-    <Compile Include="Person_CheckList.cs" />
+    <Compile Include="DummyDataClasses\Person.cs" />
+    <Compile Include="CheckListClasses\Person_CheckList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

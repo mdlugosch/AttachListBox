@@ -10,6 +10,6 @@ namespace AttachListBox
     class SortedThemeList
     {
         public string Gruppe { get; set; }
-        public ObservableCollection<Thema> ThemeList { get; set; }
+        public ObservableCollection<Thema_CheckList> ThemeList { get; set; }
     }
 }
