@@ -12,6 +12,8 @@ namespace AttachListBox
 {
     class MainViewModel : INotifyCollectionChanged
     {
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
         #region Commands
         SendListBoxCommand sendListBox;
         public ICommand SendListBox { get
@@ -38,44 +40,37 @@ namespace AttachListBox
             }
         }
         #endregion
-
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
         #region Themen-Datenliste
-        ObservableCollection<Thema> themen;
+        ObservableCollection<Thema> themen = new ObservableCollection<Thema>();
         public ObservableCollection<Thema> ThemenListe { get { return themen; } }
         #endregion
-
+        #region aufbereitete Themenliste
+        public ObservableCollection<SortedThemeList> SortedThemes { get { return sortedThemes; } }   
+        // Datenstruktur zum umwandeln des unsortierten Liste
         ObservableCollection<SortedThemeList> sortedThemes = new ObservableCollection<SortedThemeList>();
-        public ObservableCollection<SortedThemeList> SortedThemes { get { return sortedThemes; } }
+        #endregion
 
+        #region Personen-Datenliste
+        ObservableCollection<Person> persons = new ObservableCollection<Person>();
+        public ObservableCollection<Person> PersonList { get { return persons; } }
+        #endregion
+        #region List mit ausgewählten Personen
+        ObservableCollection<Person_CheckList> persons_Checklist = new ObservableCollection<Person_CheckList>();
+        public ObservableCollection<Person_CheckList> Persons_Checklist { get { return persons_Checklist; } }
+        #endregion
         #region List mit ausgewählten Themen
         public ObservableCollection<Thema> themeResult = new ObservableCollection<Thema>();
         public ObservableCollection<Thema> ThemeResult { get { return themeResult; } }
         #endregion
 
-        ObservableCollection<String> themen_grp { get; set; }
-
-        #region Personen-Datenliste
-        ObservableCollection<Person> persons;
-        public ObservableCollection<Person> PersonList { get { return persons; } }
-        #endregion
-        #region Datenliste die als Checkliste erweitert ist.
-        ObservableCollection<Person_CheckList> persons_Checklist;
-        public ObservableCollection<Person_CheckList> Persons_Checklist { get { return persons_Checklist; } }      
-        #endregion
         #region Filterliste für ListBox-Benutzerauswahl
         ObservableCollection<Person_CheckList> persons_Filterlist = new ObservableCollection<Person_CheckList>();
         public ObservableCollection<Person_CheckList> Persons_Filterlist { get { return persons_Filterlist; } }
         #endregion
 
+        #region Konstruktor
         public MainViewModel()
         {
-            persons = new ObservableCollection<Person>();
-            persons_Checklist = new ObservableCollection<Person_CheckList>();
-
-            themen = new ObservableCollection<Thema>();
-
             #region DummyDaten Personenliste erstellen
             for (int i=1; i<11; i++)
             persons.Add(new AttachListBox.Person { Id = i, Name = "Person" + i });
@@ -91,10 +86,14 @@ namespace AttachListBox
             }
             #endregion
 
+            // Umwandeln der Bestehenden Pesonenliste in eine "Checkliste"
             persons_Checklist = ComposeCheckList(persons);
+            // Mappen der unsortierten List in eine neue Struktur
             BuildThemeList();
         }
+        #endregion
 
+        #region Personenliste in Checkliste umwandeln
         public ObservableCollection<Person_CheckList> ComposeCheckList(ObservableCollection<Person> p)
         {
             ObservableCollection<Person_CheckList> checklist = new ObservableCollection<Person_CheckList>();
@@ -106,7 +105,9 @@ namespace AttachListBox
 
             return checklist;
         }
+        #endregion
 
+        #region Mapping der unsortierten Themenliste
         public void BuildThemeList()
         {
             var groupQuery = from q in themen
@@ -127,7 +128,13 @@ namespace AttachListBox
                 sortedThemes.Add(new SortedThemeList() { Gruppe = element.Key, ThemeList = new ObservableCollection<Thema_CheckList>(themeQuery) });
             }
         }
+        #endregion
 
+        #region Ergebnisliste aus der TreeView
+        /*
+         * Für die TreeView muss die Benutzerauswahl in einer 
+         * Ergebnisliste gespeichert werden
+         */
         public void GetThemeResultList()
         {
             ThemeResult.Clear();
@@ -140,12 +147,14 @@ namespace AttachListBox
                 }
             }
         }
+        #endregion
 
         #region Command-Methode
         public void SendListBoxCommand()
         {
             persons_Filterlist.Clear();
 
+            // ViewBox-Auswahl in Ergebnislist abspeichern.
             foreach (Person_CheckList element in persons_Checklist)
             {
                 if (element.IsChecked) persons_Filterlist.Add(element);
@@ -154,6 +163,7 @@ namespace AttachListBox
 
         public void SendTreeViewCommand()
         {
+            // ResultListe neu anlegen
             GetThemeResultList();
         }
             #endregion
